@@ -1,0 +1,27 @@
+"""
+Match world space TRANSLATION of one object to another
+"""
+import maya.cmds as cmds
+
+#Get list of what is selected
+selectionList = cmds.ls( orderedSelection=True)
+
+#check that at least two things are selected
+if len( selectionList ) >= 2:
+    print 'Selected items : %s' % ( selectionList )
+    
+    # the "target" is the thing you want to match to. the "matchee"
+    #is the thing being sent to the target.target is the last thing selected
+    targetName = selectionList[-1]
+    selectionList.remove( targetName )
+    for matcheeName in selectionList:
+        print 'Constraining %s towards %s' % (matcheeName, targetName)
+        
+        #Parent constrain TRANSLATION ONLY matchee(s)to target, with NO maintain offset
+        cmds.parentConstraint ( targetName, matcheeName,sr=["x","y","z"], mo=False)
+        
+        #Delete constraints
+        cmds.delete( cn=True ) 
+        
+else:
+    print 'Select at least two items'
