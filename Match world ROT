@@ -18,10 +18,11 @@ if len( selectionList ) >= 2:
         print 'Constraining %s towards %s' % (matcheeName, targetName)
         
         #Parent constrain ROTATION ONLY matchee(s)to target, with NO maintain offset
-        cmds.parentConstraint ( targetName, matcheeName,st=["x","y","z"], mo=False)
+        cmds.parentConstraint ( targetName, matcheeName,st=["x","y","z"], mo=False, n='tempConstr')
         
         #Delete constraints
-        cmds.delete( cn=True ) 
+        cmds.select(clear=True)
+        cmds.select('tempConstr') 
         
 else:
     print 'Select at least two items'
