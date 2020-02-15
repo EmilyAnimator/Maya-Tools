@@ -18,13 +18,14 @@ if len( selectionList ) >= 2:
         print 'Constraining %s towards %s' % (matcheeName, targetName)
         
         #Parent constrain with NO maintain offset
-        cmds.parentConstraint ( targetName, matcheeName, mo=False)
+        cmds.parentConstraint ( targetName, matcheeName, mo=False, n='tempConstr')
         
         #Set Keyframe on matchee(s)
         cmds.setKeyframe()        
                                 
-        #Delete constraints
-        cmds.delete( cn=True ) 
+        #clear Selection, Delete constraint only
+        cmds.select(clear=True)
+        cmds.select('tempConstr') 
         
 else:
     print 'Select at least two items'
