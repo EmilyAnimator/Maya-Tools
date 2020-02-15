@@ -1,5 +1,4 @@
 """
-"""
 Match world space TRANSLATION of one object to another
 """
 import maya.cmds as cmds
