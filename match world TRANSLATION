@@ -1,4 +1,5 @@
 """
+"""
 Match world space TRANSLATION of one object to another
 """
 import maya.cmds as cmds
@@ -18,10 +19,14 @@ if len( selectionList ) >= 2:
         print 'Constraining %s towards %s' % (matcheeName, targetName)
         
         #Parent constrain TRANSLATION ONLY matchee(s)to target, with NO maintain offset
-        cmds.parentConstraint ( targetName, matcheeName,sr=["x","y","z"], mo=False)
+        cmds.parentConstraint ( targetName, matcheeName,sr=["x","y","z"], mo=False, n='tempConstr')
         
-        #Delete constraints
-        cmds.delete( cn=True ) 
+        #clear selection, select temp constraint only
+        cmds.select(clear=True)
+        cmds.select('tempConstr')
+        
+        #Delete selected
+        cmds.delete(cn=True) 
         
 else:
     print 'Select at least two items'
