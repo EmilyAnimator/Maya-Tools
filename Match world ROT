@@ -10,7 +10,7 @@ selectionList = cmds.ls( orderedSelection=True)
 if len( selectionList ) >= 2:
     print 'Selected items : %s' % ( selectionList )
     
-    # the "target" is the thing you want to match to. the "matchee"
+    #the "target" is the thing you want to match to. the "matchee"
     #is the thing being sent to the target.target is the last thing selected
     targetName = selectionList[-1]
     selectionList.remove( targetName )
@@ -18,11 +18,12 @@ if len( selectionList ) >= 2:
         print 'Constraining %s towards %s' % (matcheeName, targetName)
         
         #Parent constrain ROTATION ONLY matchee(s)to target, with NO maintain offset
-        cmds.parentConstraint ( targetName, matcheeName,st=["x","y","z"], mo=False, n='tempConstr')
+        cmds.parentConstraint ( targetName, matcheeName,st=["x","y","z"], mo=False, n='tempConstr' )
         
         #Delete constraints
-        cmds.select(clear=True)
-        cmds.select('tempConstr') 
+        cmds.select( clear=True )
+        cmds.select('tempConstr')
+        cmds.delete( cn=True ) 
         
 else:
     print 'Select at least two items'
