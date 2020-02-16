@@ -25,7 +25,8 @@ if len( selectionList ) >= 2:
                                 
         #clear Selection, Delete constraint only
         cmds.select(clear=True)
-        cmds.select('tempConstr') 
+        cmds.select('tempConstr')
+        cmds.delete(cn=True) 
         
 else:
     print 'Select at least two items'
