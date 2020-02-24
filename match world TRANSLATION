@@ -3,29 +3,25 @@ Match world space TRANSLATION of one object to another
 """
 import maya.cmds as cmds
 
-#Get list of what is selected
-selectionList = cmds.ls( orderedSelection=True)
+# Get list of what is selected
+selectionList = cmds.ls(orderedSelection=True)
 
-#check that at least two things are selected
-if len( selectionList ) >= 2:
-    print 'Selected items : %s' % ( selectionList )
-    
+# check that at least two things are selected
+if len(selectionList) >= 2:
+    print 'Selected items : %s' % (selectionList)
+
     # the "target" is the thing you want to match to. the "matchee"
-    #is the thing being sent to the target.target is the last thing selected
+    # is the thing being sent to the target.target is the last thing selected
     targetName = selectionList[-1]
-    selectionList.remove( targetName )
+    selectionList.remove(targetName)
     for matcheeName in selectionList:
+        # Parent constrain ROTATION ONLY matchee(s)to target, with NO maintain offset
+        cmds.parentConstraint(targetName, matcheeName, sr=["x", "y", "z"], mo=False, n='tempConstr')
         print 'Constraining %s towards %s' % (matcheeName, targetName)
-        
-        #Parent constrain TRANSLATION ONLY matchee(s)to target, with NO maintain offset
-        cmds.parentConstraint ( targetName, matcheeName,sr=["x","y","z"], mo=False, n='tempConstr')
-        
-        #clear selection, select temp constraint only
+
+        # Delete constraints
         cmds.select(clear=True)
-        cmds.select('tempConstr')
-        
-        #Delete selected
-        cmds.delete(cn=True) 
-        
+        cmds.delete('tempConstr')
+
 else:
     print 'Select at least two items'
