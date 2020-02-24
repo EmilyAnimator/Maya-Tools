@@ -1,0 +1,41 @@
+"""
+Add World Orient Control v01
+
+This script creates a control for adding onto rigs that were built with simple FK
+limbs, that have no world space/pin options. good for adding to heads and arms.
+
+Start: user would select the joint where they want the world space orientation control added.
+"""
+import maya.cmds as cmds
+
+#store user selection on a variable
+selectionList = cmds.ls( orderedSelection=True)
+userJointSel = selectionList[-1]
+print "you have selected %s" % ( userJointSel )
+
+#make a nurb circle with a large radius
+woCtrl = cmds.circle(r=10)
+print "made a circle"
+
+#create a locator
+woPin = cmds.spaceLocator()
+print "made a locator"
+
+#parent woCtrl01 under woPin01
+cmds.parent(woCtrl, woPin)
+print "parented the circle to the locator"
+
+#match the locator translation to the user selection from the start
+cmds.parentConstraint(userJointSel, woPin, sr=["x", "y", "z"], mo=False, n="tempConstrForWorldOrient")
+cmds.delete("tempConstrForWorldOrient")
+print "constrained the translation of the locator to the user selection with no offset"
+
+#find the parent of the user selection, assign to variable
+userSelParent = cmds.listRelatives(userJointSel, parent=True )
+
+#parent constrain so the joint above user selection in the heirarchy controls the pin, trans only
+cmds.parentConstraint(userSelParent, woPin, sr=["x", "y", "z"], mo=True)
+
+#parent constrain so the circle controls the joint the user selected (rot and trans)
+cmds.parentConstraint(woCtrl, userJointSel, mo=True)
+
