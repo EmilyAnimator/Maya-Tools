@@ -9,24 +9,23 @@ selectionList = cmds.ls( orderedSelection=True)
 #check that at least two things are selected
 if len( selectionList ) >= 2:
     print 'Selected items : %s' % ( selectionList )
-    
+
     # the "target" is the thing you want to match to. the "matchee"
     #is the thing being sent to the target.target is the last thing selected
     targetName = selectionList[-1]
     selectionList.remove( targetName )
     for matcheeName in selectionList:
         print 'Constraining %s towards %s' % (matcheeName, targetName)
-        
+
         #Parent constrain with NO maintain offset
         cmds.parentConstraint ( targetName, matcheeName, mo=False, n='tempConstr')
-        
+
         #Set Keyframe on matchee(s)
-        cmds.setKeyframe()        
-                                
-        #clear Selection, Delete constraint only
-        cmds.select(clear=True)
-        cmds.select('tempConstr')
-        cmds.delete(cn=True) 
-        
+        cmds.setKeyframe(matcheeName)
+
+        #Delete constraints
+        cmds.select( clear=True )
+        cmds.delete('tempConstr')
+
 else:
     print 'Select at least two items'
