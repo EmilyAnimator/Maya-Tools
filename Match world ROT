@@ -21,7 +21,6 @@ if len( selectionList ) >= 2:
         cmds.parentConstraint ( targetName, matcheeName,st=["x","y","z"], mo=False, n='tempConstr')
 
         #Delete constraints
-        cmds.select( clear=True )
         cmds.delete('tempConstr')
 
 else:
