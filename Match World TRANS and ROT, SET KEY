@@ -24,7 +24,6 @@ if len( selectionList ) >= 2:
         cmds.setKeyframe(matcheeName)
 
         #Delete constraints
-        cmds.select( clear=True )
         cmds.delete('tempConstr')
 
 else:
