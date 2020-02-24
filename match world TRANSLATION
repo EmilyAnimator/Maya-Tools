@@ -20,7 +20,6 @@ if len(selectionList) >= 2:
         print 'Constraining %s towards %s' % (matcheeName, targetName)
 
         # Delete constraints
-        cmds.select(clear=True)
         cmds.delete('tempConstr')
 
 else:
