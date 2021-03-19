@@ -1,0 +1,4 @@
+#find the object that this thing is constrained to
+userSel = cmds.ls(sl=True)
+parent = maya.cmds.parentConstraint (userSel, q=True, tl=True)
+print parent
