@@ -1,0 +1,28 @@
+"""
+REVERSE CONSTRAINTS
+user selects CHILD only to start
+"""
+
+consChild = cmds.ls(sl=True)#get selction
+print consChild
+
+consParent = cmds.parentConstraint (consChild, q=1, tl=True)#get the object that this thing is constrained to
+
+#collect world space transform data on both
+childPos=cmds.xform(consChild,q=1, t=1,ws=1)
+childRot=cmds.xform(consChild,q=1,ro=1,ws=1)
+parentPos=cmds.xform(consParent,q=1, t=1,ws=1)
+parentRot=cmds.xform(consParent,q=1,ro=1,ws=1)
+
+
+#delete constraint
+
+cmds.delete(cmds.parentConstraint(consChild,q=1))
+
+#put everything back in the right place, in case it jumped
+cmds.xform(consChild,t=childPos,ws=1)
+cmds.xform(consChild,ro=childRot,ws=1)
+cmds.xform(consParent,t=parentPos,ws=1)
+cmds.xform(consParent,ro=parentRot,ws=1)
+
+cmds.parentConstraint(consChild,consParent, mo=True)
