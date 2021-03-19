@@ -1,0 +1,16 @@
+"""
+MATCH TRANS without constraining
+user selects thing they want to move first, and thing they want it to go to second
+"""
+#Get what's selected in order
+selList = cmds.ls(orderedSelection=True)
+moveMe = selList[0]
+targetThing = selList[1]
+
+#get target thing's transform stuff
+targetPos = cmds.xform(targetThing,q=1, t=1,ws=1)
+targetRot = cmds.xform(targetThing,q=1,ro=1,ws=1)
+
+#tell moveMe thing to go to the world space of the target thing
+cmds.xform(moveMe,t=targetPos,ws=1)
+cmds.xform(moveMe,ro=targetRot,ws=1)
