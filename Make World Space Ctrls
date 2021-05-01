@@ -9,51 +9,49 @@ tool: for each selected...
 5. reverses the constraint so selected follows locator,
 
 the locators now act as world spaced controls
-
 """
-#SET UP
+
 import maya.cmds as cmds
 
-LocList = [] # list to hold locators
-listOfDicts = [] # a list to contain the dictionaries that will pair the constraints to the locators for later iteration
+listOfDicts = [] # a list to contain dictionaries that will keep track of which user selections, constraints and locators go together.
 
-#Getting time slider Range
+#Getting time slider range
 min_time = cmds.playbackOptions(q=True, min=True)
 max_time = cmds.playbackOptions(q=True, max=True)
 
 
-#START
 userSel = cmds.ls(selection=True)# Get User selection
 
 
-for sel in userSel:# for each selected thing
+for sel in userSel:# creating locators, constraining them to the user selection, adding these elements to a dictionary, then adding that dictionary to a list of dictionaries.
     loc = cmds.spaceLocator() # make locator
     const = cmds.parentConstraint(sel,loc, mo=False) # constrain locator to follow selected, no offset
     listOfDicts.append({"sel":sel,"loc":loc,"const":const})# group these in a dictionary together, add this dictionary to the list
     cmds.select(sel, d=True)# deselect user selection
 
 
-
 for loc in listOfDicts:
-    cmds.select(loc["loc"],add=True)#SELECT ALL THE LOCATORS YOU MADE
+    cmds.select(loc["loc"],add=True)#Select the locators that were just created
+
 
 cmds.bakeResults(time=(min_time, max_time),at=["tx","ty","tz","rx","ry","rz"])#bake rotation and translation of locators
 
 
-for this in listOfDicts: # reversing the constraints
+for this in listOfDicts: # reversing the constraints so locators drive the user selection.
     locator = this["loc"]
     myParent = this["sel"]
     constraint = this["const"]
 
-    childTrans = cmds.xform(locator, q=1, t=1, ws=1)#store world space tansform data
-    childRot = cmds.xform(locator, q=1, ro=1, ws=1)#store world space tansform data
-
-    parentTrans = cmds.xform(myParent, q=1, t=1, ws=1)#store world space tansform data
-    parentRot = cmds.xform(myParent, q=1, ro=1, ws=1)  # store world space tansform data
+    #store world space tansform data
+    childTrans = cmds.xform(locator, q=1, t=1, ws=1)
+    childRot = cmds.xform(locator, q=1, ro=1, ws=1)
+    parentTrans = cmds.xform(myParent, q=1, t=1, ws=1)
+    parentRot = cmds.xform(myParent, q=1, ro=1, ws=1)
 
     cmds.delete(constraint) # delete constraint
 
+    #make sure everything is still in the right place in worldspace
     cmds.xform(locator, t=childTrans, ro=childRot, ws=1)
     cmds.xform(myParent, t=parentTrans, ro=parentRot, ws=1)
 
-    cmds.parentConstraint(locator, myParent, mo=True) #make new constraint, user selection now follows locator
+    cmds.parentConstraint(locator, myParent, mo=True)# new constraint, locator drives user selection now.
