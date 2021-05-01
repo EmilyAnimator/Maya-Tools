@@ -1,0 +1,59 @@
+"""
+WORLD SPACER
+user: selects control(s) they want to world space
+tool: for each selected...
+1. makes locator
+2.matches locator to selected
+3.constrains locator to selected
+4. bakes the anim into the locator for the length of the timeline
+5. reverses the constraint so selected follows locator,
+
+the locators now act as world spaced controls
+
+"""
+#SET UP
+import maya.cmds as cmds
+
+LocList = [] # list to hold locators
+listOfDicts = [] # a list to contain the dictionaries that will pair the constraints to the locators for later iteration
+
+#Getting time slider Range
+min_time = cmds.playbackOptions(q=True, min=True)
+max_time = cmds.playbackOptions(q=True, max=True)
+
+
+#START
+userSel = cmds.ls(selection=True)# Get User selection
+
+
+for sel in userSel:# for each selected thing
+    loc = cmds.spaceLocator() # make locator
+    const = cmds.parentConstraint(sel,loc, mo=False) # constrain locator to follow selected, no offset
+    listOfDicts.append({"sel":sel,"loc":loc,"const":const})# group these in a dictionary together, add this dictionary to the list
+    cmds.select(sel, d=True)# deselect user selection
+
+
+
+for loc in listOfDicts:
+    cmds.select(loc["loc"],add=True)#SELECT ALL THE LOCATORS YOU MADE
+
+cmds.bakeResults(time=(min_time, max_time),at=["tx","ty","tz","rx","ry","rz"])#bake rotation and translation of locators
+
+
+for this in listOfDicts: # reversing the constraints
+    locator = this["loc"]
+    myParent = this["sel"]
+    constraint = this["const"]
+
+    childTrans = cmds.xform(locator, q=1, t=1, ws=1)#store world space tansform data
+    childRot = cmds.xform(locator, q=1, ro=1, ws=1)#store world space tansform data
+
+    parentTrans = cmds.xform(myParent, q=1, t=1, ws=1)#store world space tansform data
+    parentRot = cmds.xform(myParent, q=1, ro=1, ws=1)  # store world space tansform data
+
+    cmds.delete(constraint) # delete constraint
+
+    cmds.xform(locator, t=childTrans, ro=childRot, ws=1)
+    cmds.xform(myParent, t=parentTrans, ro=parentRot, ws=1)
+
+    cmds.parentConstraint(locator, myParent, mo=True) #make new constraint, user selection now follows locator
