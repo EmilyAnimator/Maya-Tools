@@ -3,7 +3,6 @@ LAYOUT RIG MAKER
 creates a rig for easily moving elements around in layout relative to camera instead of world.
 User specifies number of characters (or other elements) and it generates a simple rig for them to parent root nulls to
 """
-#DONT FORGET TO ADD YOUR FUNCTION CALLS!!!
 
 from maya import cmds
 
