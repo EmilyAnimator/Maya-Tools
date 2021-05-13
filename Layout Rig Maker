@@ -1,0 +1,60 @@
+"""
+LAYOUT RIG MAKER
+creates a rig for easily moving elements around in layout relative to camera instead of world.
+User specifies number of characters (or other elements) and it generates a simple rig for them to parent root nulls to
+"""
+#DONT FORGET TO ADD YOUR FUNCTION CALLS!!!
+
+from maya import cmds
+
+offset = 50  # how far apart to put stuff so they don't spawn on top of each other
+large = 16
+medium = 12
+small = 8
+
+
+def make_master():
+    global master
+    master = cmds.spaceLocator(name="LayoutMaster")  # make the master control
+    cmds.xform(t=(0, offset, 0))  # move it up above the others
+
+    # scale it up
+    masterShape = cmds.listRelatives(master, s=True)
+    cmds.setAttr(masterShape[0] + '.localScaleX', large)
+    cmds.setAttr(masterShape[0] + '.localScaleY', large)
+    cmds.setAttr(masterShape[0] + '.localScaleZ', large)
+
+
+
+def make_char_ctrl():
+    user_input = cmds.promptDialog(title="Layout Rig Set Up", message= "how many characters?", b=["make rig","cancel"], cb="cancel", db="make rig")#ask user how many character controls they want
+    num_of_chars = 1 #setting a default int, will be replaced.
+    if user_input == "make rig":#on button press
+        chars = cmds.promptDialog(query=True,text=True)#get user input as string
+        if chars:#check if user put in anything
+            num_of_chars = int(chars)#convert to int
+        else:
+            num_of_chars = 1
+        while num_of_chars > 0:# make a control for each
+                new = cmds.circle (name=("charCtrl"+str(num_of_chars)), radius=medium,nr=(0,5,0))
+                cmds.xform(new,t=(0,0,num_of_chars * offset*-1))# move the controls away from each other, just keep moving them in -z
+                num_of_chars -= 1 #counting down until we have made them all.
+                cmds.parent(new, master)
+
+
+
+
+def make_cam_ctrl():
+    cam_main= cmds.circle(name="cameraMain", radius=medium,nr=(0,5,0))#create camera main, scale it up
+    cam_sub= cmds.circle(name="cameraSub",radius=small)#create camera sub, scale it but less than main
+    cmds.parent(cam_sub,cam_main)#parent sub to main
+    cmds.xform(cam_main, t=(0,0,offset))#move forward in z
+    cmds.parent(cam_main, master)
+    
+
+
+
+#RUN ALL THE THINGS
+make_master()
+make_char_ctrl()
+make_cam_ctrl()
